@@ -1,20 +1,22 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2020",
     "module": "commonjs",
     "declaration": true,
     "moduleResolution": "node",
     "sourceMap": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "lib": ["es2016", "dom"],
+    "lib": ["es2020", "dom"],
     "noImplicitAny": true,
     "outDir": "./dist",
-    "suppressImplicitAnyIndexErrors": true,
     "typeRoots": [
       "./node_modules/@types/",
       "./test/types/"
-    ]
+    ],
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
   },
   "exclude": [
     "./node_modules/*",

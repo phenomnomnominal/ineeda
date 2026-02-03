@@ -3,9 +3,7 @@
 export const NOOP = () => {};
 /* tslint:enable:no-empty */
 
-export type Constructable<T> = {
-    new (...args: Array<any>): T
-};
+export type Constructable<T> = new (...args: Array<any>) => T;
 
 export type IneedaKey<T> = keyof T | keyof IneedaProxy<T> | keyof Object | keyof Function;
 

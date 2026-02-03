@@ -14,10 +14,10 @@ export function getInterceptors <T> (interceptor: IneedaInterceptor<T>): Array<I
     if (interceptor instanceof Function) {
         interceptors.push(interceptor);
     } else {
-        Object.keys(interceptor).forEach((interceptorKey: keyof T) => {
+        Object.keys(interceptor).forEach(interceptorKey => {
             interceptors.push((value, key) => {
                 if (key === interceptorKey) {
-                    return interceptor[interceptorKey];
+                    return interceptor[interceptorKey as keyof T];
                 }
                 return value;
             });

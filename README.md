@@ -116,6 +116,16 @@ ineeda.intercept({
     // Prevent zone.js from thinking ineeda mocks are unconfigurable:
     __zone_symbol__unconfigurables: null
 });
+
+ineeda.intercept((value: any, key: string, values: any, target: any) => {
+    // Prevent jasmine from thinking ineeda mocks already have the fields 'and' and 'calls'
+    if (key === 'and' || key === 'calls') {
+        Object.defineProperty(target, key, {
+            enumerable: false
+        });
+    }
+    return value;
+});
 ```
 
 ### Adding behaviour to proxied values:

@@ -13,12 +13,12 @@ export function createProxy <T, K extends IneedaKey<T>> (valuesExternal: Partial
     let intercepted: Array<IneedaKey<T>> = [];
 
     reset();
-    let proxyBase = key ? NOOP : {};
-    return new Proxy(<any>proxyBase, { apply, get, getOwnPropertyDescriptor, has, ownKeys, set });
+    let proxyBase = key ? (() => { /* no-op */ }) : {};
+    return new Proxy(<any>proxyBase, { apply, get, getOwnPropertyDescriptor, has, ownKeys, set } as ProxyHandler<T & IneedaProxy<T>>);
 
     function apply (): void {
         throw new Error(`
-            "${key}" is not implemented.
+            "${String(key)}" is not implemented.
         `);
     }
 
@@ -26,11 +26,16 @@ export function createProxy <T, K extends IneedaKey<T>> (valuesExternal: Partial
         if (_isInternalKey(key)) {
             return valuesInternal[key];
         }
+
+        if (_isTargetKey(target, key)) {
+            return target[key];
+        }
+
         if (_isExternalKey(key)) {
             return _runInterceptors(target, key, valuesExternal[key]);
         }
         if (_isObjectKey(key) || _isSymbol(key)) {
-            return {}[key];
+            return (<Record<PropertyKey, any>>{})[key];
         }
         if (_isFunctionKey(key)) {
             return NOOP[key];
@@ -63,11 +68,12 @@ export function createProxy <T, K extends IneedaKey<T>> (valuesExternal: Partial
     }
 
     function ownKeys (): Array<string> {
-        return ['prototype'].concat(Object.keys(valuesExternal));
+        return Object.keys(valuesExternal);
     }
 
     function reset (): T {
         interceptors = getGlobalInterceptors();
+        intercepted = [];
         return this;
     }
 
@@ -106,6 +112,10 @@ export function createProxy <T, K extends IneedaKey<T>> (valuesExternal: Partial
 
     function _isSymbol (key: PropertyKey): boolean {
         return typeof key === 'symbol' || key === 'inspect';
+    }
+
+    function _isTargetKey (target: T, key: IneedaKey<T>): key is keyof T {
+        return Object.prototype.hasOwnProperty.call(target, key);
     }
 
     function _runInterceptors <K extends keyof T> (target: T, key: K, value: any): any {

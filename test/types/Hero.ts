@@ -1,6 +1,6 @@
 // Utilities:
 import * as Promise from 'bluebird';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 // Dependencies:
 import Weapon from './Weapon';
